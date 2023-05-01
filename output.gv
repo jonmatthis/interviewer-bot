@@ -1,0 +1,13 @@
+digraph {
+	A [label="Input Layer
+<Input>"]
+	B [label="Hidden Layer 1
+<Hidden>"]
+	C [label="Hidden Layer 2
+<Hidden>"]
+	D [label="Output Layer
+<Output>"]
+	A -> B
+	B -> C
+	C -> D
+}

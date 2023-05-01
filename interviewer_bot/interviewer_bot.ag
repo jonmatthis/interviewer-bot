@@ -1,0 +1,28 @@
+// Declare node types
+node A <Main> "Interviewer";
+
+// supervisors
+node B(Supervisor) "candidate job specific skills";
+node C(Supervisor) "dig deeper on recent topics";
+node D(Supervisor) "rephrase question if candidate misunderstands";
+
+// memories
+node E (ConversationSummaryMemory){}
+
+node F (ConversationBufferWindowMemory){
+    k = 2
+}
+
+node G (ConversationMemory){
+
+}
+
+// supervisor
+dependency B -> A "guides";
+dependency C -> A "guides";
+dependency D -> A "guides";
+
+// supportive
+dependency E -> B "memory";
+dependency F -> C "memory";
+dependency G -> D "memory";
