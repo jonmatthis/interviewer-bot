@@ -14,8 +14,15 @@ def parse_archgraph(file_path):
             node_match = re.match(r'node\s+(\w+)\s+<([^>]+)>\s+"([^"]+)";', line)
             if node_match:
                 node_id, node_type, node_label = node_match.groups()
-                nodes[node_id] = {'type': node_type, 'label': node_label}
+                nodes[node_id] = {'type': node_type, 'label': node_label, 'properties': {}}
                 continue
+
+            # Parse node properties
+            prop_match = re.match(r'node\s+(\w+)\s+\(([^)]+)\)\s+{([^}]*)}', line)
+            if prop_match:
+                node_id, node_type, props_str = prop_match.groups()
+                properties = dict(re.findall(r'\s*(\w+)\s*=\s*(\w+)', props_str))
+                nodes[node_id]['properties'].update(properties)
 
             # Parse dependency declaration
             dependency_match = re.match(r'dependency\s+(\w+)\s+->\s+(\w+)(?:\s+"([^"]+)")?;', line)
@@ -30,7 +37,10 @@ def draw_graph(nodes, dependencies, node_font_size=14, edge_font_size=12):
 
     # Add nodes to the graph
     for node_id, node_info in nodes.items():
-        G.add_node(node_id, label=f'{node_info["label"]}\n<{node_info["type"]}>')
+        prop_str = ', '.join(f'{k}={v}' for k, v in node_info['properties'].items())
+        if prop_str:
+            prop_str = f'{{{prop_str}}}'
+        G.add_node(node_id, label=f'{node_info["label"]}\n<{node_info["type"]}>\n{prop_str}')
 
     # Add dependencies to the graph
     for source, target, label in dependencies:
